@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 
+import '../pageStyles/upload-object.css'
+
 import { API_HOST } from '../config'
 import { bytesToSize } from '../utils';
 

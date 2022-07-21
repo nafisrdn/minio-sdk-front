@@ -1,0 +1,12 @@
+.parent {
+    min-width: 100vw;
+    min-height: 100vh;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+.main {
+    width: 600px;
+    max-width: 100%;
+}
