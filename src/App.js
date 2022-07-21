@@ -7,6 +7,8 @@ import { API_HOST } from './config'
 import './App.css';
 import { bytesToSize } from './utils';
 
+const bucketName = 'digital-bucket-prod'
+
 function App() {
   const [file, setFile] = useState('')
   const [actionHistory, setActionHistory] = useState([])
@@ -30,7 +32,7 @@ function App() {
       const formData = new FormData();
       formData.append('file', file)
 
-      const res = await axios.post(API_HOST + 'terserahlah', formData, {
+      const res = await axios.post(API_HOST + bucketName, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
