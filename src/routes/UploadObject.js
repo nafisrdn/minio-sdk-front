@@ -1,15 +1,12 @@
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
-
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 
-import { API_HOST } from './config'
-import './App.css';
-import { bytesToSize } from './utils';
+import { API_HOST } from '../config'
+import { bytesToSize } from '../utils';
 
 const bucketName = 'digital-bucket-prod'
 
-function App() {
+function UploadObject() {
   const [file, setFile] = useState('')
   const [actionHistory, setActionHistory] = useState([])
   const inputFileRef = useRef()
@@ -79,4 +76,4 @@ function App() {
   );
 }
 
-export default App;
+export default UploadObject;
