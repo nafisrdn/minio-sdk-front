@@ -1,3 +1,9 @@
+import MainLayout from "../components/layouts/MainLayout";
+
 export default function BucketList() {
-    return <h1>list</h1>
+  return (
+    <MainLayout>
+      <h1>list</h1>
+    </MainLayout>
+  );
 }
