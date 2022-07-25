@@ -1,13 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import MainLayout from "../components/Layouts/MainLayout";
 import UploadObjectModal from "../components/UploadObjectModal";
+import { API_HOST } from "../config";
 
 export default function BucketObjectList() {
   const { bucketName } = useParams();
   const [isUploadModalShow, setIsUploadModalShow] = useState(false);
+  const [bucketObjects, setBucketObjects] = useState([]);
 
-  // console.log(isUploadModalShow);
+  useEffect(() => {
+    getBucketObjects();
+  }, []);
+
+  async function getBucketObjects() {
+    try {
+      const res = await axios.get(API_HOST + "bucket/" + bucketName);
+      const { data } = res;
+
+      setBucketObjects(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <MainLayout>
@@ -39,7 +55,20 @@ export default function BucketObjectList() {
           </thead>
 
           <tbody>
-            <tr>
+            {bucketObjects.map((obj, index) => (
+              <tr key={obj.etag}>
+                <td>{index + 1}</td>
+                <td>{obj.name}</td>
+                <td>{obj.lastModified}</td>
+                <td>{obj.size}</td>
+                <td>
+                  <a href="#" className="btn btn-danger">
+                    Delete
+                  </a>
+                </td>
+              </tr>
+            ))}
+            {/* <tr>
               <td>1</td>
               <td>prod-liam</td>
               <td>2022-07-20T09:00:10.664Z</td>
@@ -71,7 +100,7 @@ export default function BucketObjectList() {
                   Delete
                 </a>
               </td>
-            </tr>
+            </tr> */}
           </tbody>
         </table>
       </main>
