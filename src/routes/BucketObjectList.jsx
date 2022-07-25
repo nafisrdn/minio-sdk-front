@@ -4,8 +4,9 @@ import axios from "axios";
 import MainLayout from "../components/Layouts/MainLayout";
 import UploadObjectModal from "../components/UploadObjectModal";
 import { API_HOST } from "../config";
+import { bytesToSize } from "../utils";
 
-export default function BucketObjectList() {
+export default function BucketObjectList({ timeAgo }) {
   const { bucketName } = useParams();
   const [isUploadModalShow, setIsUploadModalShow] = useState(false);
   const [bucketObjects, setBucketObjects] = useState([]);
@@ -78,8 +79,9 @@ export default function BucketObjectList() {
               <tr key={obj.etag}>
                 <td>{index + 1}</td>
                 <td>{obj.name}</td>
-                <td>{obj.lastModified}</td>
-                <td>{obj.size}</td>
+                <td>{timeAgo.format(new Date(obj.lastModified))}</td>
+                {/* <td>{obj.lastModified}</td> */}
+                <td>{bytesToSize(obj.size)}</td>
                 <td>
                   <a href="#" className="btn btn-danger">
                     Delete
