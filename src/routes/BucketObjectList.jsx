@@ -35,6 +35,10 @@ export default function BucketObjectList({ timeAgo }) {
   function deleteObjectHandle(event, obj) {
     event.preventDefault();
 
+    let confirmed = window.confirm(`Delete ${obj.name}?`);
+
+    if (!confirmed) return;
+
     deleteObject(obj.name);
   }
 
