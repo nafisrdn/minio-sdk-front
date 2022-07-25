@@ -37,18 +37,6 @@ export default function BucketList() {
             {bucket.name}
           </Link>
         ))}
-        {/* <Link
-          to="/bucket/test"
-          className="list-group-item list-group-item-action"
-        >
-          My Bucket
-        </Link>
-        <Link to="a" className="list-group-item list-group-item-action">
-          Second Bucket
-        </Link>
-        <Link to="a" className="list-group-item list-group-item-action">
-          Final Bucket
-        </Link> */}
       </div>
     </MainLayout>
   );

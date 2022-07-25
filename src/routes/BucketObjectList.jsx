@@ -9,10 +9,11 @@ export default function BucketObjectList() {
   const { bucketName } = useParams();
   const [isUploadModalShow, setIsUploadModalShow] = useState(false);
   const [bucketObjects, setBucketObjects] = useState([]);
+  const [latestInfo, setLatestInfo] = useState(null);
 
   useEffect(() => {
     getBucketObjects();
-  }, []);
+  }, [latestInfo]);
 
   async function getBucketObjects() {
     try {
@@ -25,19 +26,37 @@ export default function BucketObjectList() {
     }
   }
 
+  function objectUploadedHandle(info) {
+    setIsUploadModalShow(false);
+    setLatestInfo(info);
+  }
+
   return (
     <MainLayout>
       <UploadObjectModal
         show={isUploadModalShow}
         onCloseClick={() => setIsUploadModalShow(false)}
         bucketName={bucketName}
+        onObjectUploaded={objectUploadedHandle}
       />
+      {latestInfo && (
+        <div
+          className={`alert alert-${
+            latestInfo.isSuccess ? "success" : "error"
+          }`}
+        >
+          {latestInfo.message}: {latestInfo.fileName}
+        </div>
+      )}
       <header className="d-flex justify-content-between align-items-center">
         <h1>{bucketName}</h1>
         <a
           href="#"
           className="btn btn-primary"
-          onClick={() => setIsUploadModalShow(true)}
+          onClick={(e) => {
+            e.preventDefault();
+            setIsUploadModalShow(true);
+          }}
         >
           Upload +
         </a>
@@ -68,39 +87,6 @@ export default function BucketObjectList() {
                 </td>
               </tr>
             ))}
-            {/* <tr>
-              <td>1</td>
-              <td>prod-liam</td>
-              <td>2022-07-20T09:00:10.664Z</td>
-              <td>50MB</td>
-              <td>
-                <a href="#" className="btn btn-danger">
-                  Delete
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>prod-liam</td>
-              <td>2022-07-20T09:00:10.664Z</td>
-              <td>50MB</td>
-              <td>
-                <a href="#" className="btn btn-danger">
-                  Delete
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>prod-liam</td>
-              <td>2022-07-20T09:00:10.664Z</td>
-              <td>50MB</td>
-              <td>
-                <a href="#" className="btn btn-danger">
-                  Delete
-                </a>
-              </td>
-            </tr> */}
           </tbody>
         </table>
       </main>
