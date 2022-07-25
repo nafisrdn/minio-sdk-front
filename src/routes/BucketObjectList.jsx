@@ -32,6 +32,29 @@ export default function BucketObjectList({ timeAgo }) {
     setLatestInfo(info);
   }
 
+  function deleteObjectHandle(event, obj) {
+    event.preventDefault();
+
+    deleteObject(obj.name);
+  }
+
+  async function deleteObject(objectName) {
+    try {
+      const res = await axios.delete(`${API_HOST}bucket/${bucketName}`, {
+        data: { objectName: objectName },
+      });
+
+      setLatestInfo({
+        isSuccess: true,
+        message: res.data.message,
+        fileName: objectName,
+      });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <MainLayout>
       <UploadObjectModal
@@ -83,7 +106,11 @@ export default function BucketObjectList({ timeAgo }) {
                 {/* <td>{obj.lastModified}</td> */}
                 <td>{bytesToSize(obj.size)}</td>
                 <td>
-                  <a href="#" className="btn btn-danger">
+                  <a
+                    href="#"
+                    className="btn btn-danger"
+                    onClick={(event) => deleteObjectHandle(event, obj)}
+                  >
                     Delete
                   </a>
                 </td>
