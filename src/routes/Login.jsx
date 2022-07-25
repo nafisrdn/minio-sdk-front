@@ -12,7 +12,10 @@ export default function Login() {
   const formHandle = async (e) => {
     e.preventDefault();
 
-    const res = await axios.get(API_HOST, { params: {accessKey: accessKey, privateKey: privateKey} });
+    const res = await axios.post(API_HOST + "auth/login", {
+      accessKey: accessKey,
+      privateKey: privateKey,
+    });
 
     console.log(res);
   };
