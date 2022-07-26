@@ -121,7 +121,7 @@ export default function BucketObjectList({ timeAgo }) {
 
           <tbody>
             {bucketObjects.map((obj, index) => (
-              <tr key={obj.etag}>
+              <tr key={obj.etag + index}>
                 <td>{index + 1}</td>
                 <td>{obj.name}</td>
                 <td>{timeAgo.format(new Date(obj.lastModified))}</td>
