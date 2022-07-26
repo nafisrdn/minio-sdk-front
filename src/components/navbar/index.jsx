@@ -14,13 +14,13 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="col">
+          {/* <div className="col">
             <div className="d-flex justify-content-end align-items-center h-100">
               <Link to="/logout" className="btn btn-warning">
                 Logout
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </nav>

@@ -5,12 +5,15 @@ import MainLayout from "../components/Layouts/MainLayout";
 import UploadObjectModal from "../components/UploadObjectModal";
 import { API_HOST } from "../config";
 import { bytesToSize } from "../utils";
+import ObjectPreviewModal from "../components/ObjectPreviewModal";
 
 export default function BucketObjectList({ timeAgo }) {
   const { bucketName } = useParams();
   const [isUploadModalShow, setIsUploadModalShow] = useState(false);
+  const [isPreviewModalShow, setIsPreviewModalShow] = useState(false);
   const [bucketObjects, setBucketObjects] = useState([]);
   const [latestInfo, setLatestInfo] = useState(null);
+  const [selectedObj, setSelectedObj] = useState();
 
   useEffect(() => {
     getBucketObjects();
@@ -59,6 +62,13 @@ export default function BucketObjectList({ timeAgo }) {
     }
   }
 
+  function viewObjectHandle(event, obj) {
+    event.preventDefault();
+
+    setSelectedObj(obj);
+    setIsPreviewModalShow(true);
+  }
+
   return (
     <MainLayout>
       <UploadObjectModal
@@ -67,6 +77,12 @@ export default function BucketObjectList({ timeAgo }) {
         bucketName={bucketName}
         onObjectUploaded={objectUploadedHandle}
       />
+      {isPreviewModalShow && (
+        <ObjectPreviewModal
+          src={`${API_HOST}bucket/${bucketName}/object?objectName=${selectedObj.name}&action=view`}
+          onCloseClick={() => setIsPreviewModalShow(false)}
+        />
+      )}
       {latestInfo && (
         <div
           className={`alert alert-${
@@ -97,6 +113,8 @@ export default function BucketObjectList({ timeAgo }) {
               <th className="col">Name</th>
               <th className="col">Last Modified</th>
               <th className="col">Size</th>
+              <th className="col">View</th>
+              <th className="col">Download</th>
               <th className="col">Delete</th>
             </tr>
           </thead>
@@ -107,8 +125,24 @@ export default function BucketObjectList({ timeAgo }) {
                 <td>{index + 1}</td>
                 <td>{obj.name}</td>
                 <td>{timeAgo.format(new Date(obj.lastModified))}</td>
-                {/* <td>{obj.lastModified}</td> */}
                 <td>{bytesToSize(obj.size)}</td>
+                <td>
+                  <a
+                    href="#"
+                    className="btn btn-primary"
+                    onClick={(event) => viewObjectHandle(event, obj)}
+                  >
+                    View
+                  </a>
+                </td>
+                <td>
+                  <a
+                    href={`${API_HOST}bucket/${bucketName}/object?objectName=${obj.name}&action=download`}
+                    className="btn btn-success"
+                  >
+                    Download
+                  </a>
+                </td>
                 <td>
                   <a
                     href="#"
