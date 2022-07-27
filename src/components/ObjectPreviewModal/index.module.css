@@ -12,6 +12,10 @@
     display: block;
 }
 
-.image {
+.image, .text {
     max-width: 100%;
+}
+
+.text {
+    word-break: break-word;
 }

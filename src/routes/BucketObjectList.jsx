@@ -65,7 +65,11 @@ export default function BucketObjectList({ timeAgo }) {
   function viewObjectHandle(event, obj) {
     event.preventDefault();
 
-    setSelectedObj(obj);
+    const splitText = obj.name.split(".");
+    const ext = splitText[splitText.length - 1].toLowerCase();
+
+
+    setSelectedObj({ object: obj, ext: ext });
     setIsPreviewModalShow(true);
   }
 
@@ -79,7 +83,9 @@ export default function BucketObjectList({ timeAgo }) {
       />
       {isPreviewModalShow && (
         <ObjectPreviewModal
-          src={`${API_HOST}bucket/${bucketName}/object?objectName=${selectedObj.name}&action=view`}
+          object={selectedObj.object}
+          ext={selectedObj.ext}
+          bucketName={bucketName}
           onCloseClick={() => setIsPreviewModalShow(false)}
         />
       )}
