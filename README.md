@@ -10,6 +10,8 @@ React Web App to test MinIO SDK
 
 ### Example
 
+#### Windows
+
 ```
 docker run --name minio-sdk-front `
  -e REACT_APP_API_HOST="http://172.17.0.6:8000" `
