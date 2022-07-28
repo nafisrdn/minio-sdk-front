@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { API_HOST, API_PORT } from "../../config";
 import style from "./index.module.css";
 
@@ -13,13 +13,7 @@ export default function ObjectPreviewModal({
 
   const isImage = ext === "png" || ext === "jpg" || ext === "gif";
 
-  useEffect(() => {
-    if (isImage) return;
-
-    getObj();
-  }, [object]);
-
-  async function getObj() {
+  const getObj = useCallback(async () => {
     const res = await axios.get(
       `${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${object.name}&action=view&plain=true`
     );
@@ -31,7 +25,13 @@ export default function ObjectPreviewModal({
     } else {
       setObjContent(data);
     }
-  }
+  }, [bucketName, ext, object.name]);
+
+  useEffect(() => {
+    if (isImage) return;
+
+    getObj();
+  }, [object, isImage, getObj]);
 
   return (
     <div className={style.parent}>
@@ -46,6 +46,7 @@ export default function ObjectPreviewModal({
                 <img
                   src={`${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${object.name}&action=view`}
                   className={style.image}
+                  alt=''
                 />
               ) : (
                 <p className={style.text}>{objContent}</p>

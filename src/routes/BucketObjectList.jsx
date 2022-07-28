@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import MainLayout from "../components/Layouts/MainLayout";
@@ -15,20 +15,22 @@ export default function BucketObjectList({ timeAgo }) {
   const [latestInfo, setLatestInfo] = useState(null);
   const [selectedObj, setSelectedObj] = useState();
 
-  useEffect(() => {
-    getBucketObjects();
-  }, [latestInfo]);
-
-  async function getBucketObjects() {
+  const getBucketObjects = useCallback(async () => {
     try {
-      const res = await axios.get(`${API_HOST}:${API_PORT}/bucket/${bucketName}`);
+      const res = await axios.get(
+        `${API_HOST}:${API_PORT}/bucket/${bucketName}`
+      );
       const { data } = res;
 
       setBucketObjects(data);
     } catch (error) {
       console.error(error);
     }
-  }
+  }, [bucketName]);
+
+  useEffect(() => {
+    getBucketObjects();
+  }, [latestInfo, getBucketObjects]);
 
   function objectUploadedHandle(info) {
     setIsUploadModalShow(false);
@@ -47,9 +49,12 @@ export default function BucketObjectList({ timeAgo }) {
 
   async function deleteObject(objectName) {
     try {
-      const res = await axios.delete(`${API_HOST}:${API_PORT}/bucket/${bucketName}`, {
-        data: { objectName: objectName },
-      });
+      const res = await axios.delete(
+        `${API_HOST}:${API_PORT}/bucket/${bucketName}`,
+        {
+          data: { objectName: objectName },
+        }
+      );
 
       setLatestInfo({
         isSuccess: true,
@@ -67,7 +72,6 @@ export default function BucketObjectList({ timeAgo }) {
 
     const splitText = obj.name.split(".");
     const ext = splitText[splitText.length - 1].toLowerCase();
-
 
     setSelectedObj({ object: obj, ext: ext });
     setIsPreviewModalShow(true);
@@ -101,7 +105,7 @@ export default function BucketObjectList({ timeAgo }) {
       <header className="d-flex justify-content-between align-items-center">
         <h1>{bucketName}</h1>
         <a
-          href="#"
+          href="#upload"
           className="btn btn-primary"
           onClick={(e) => {
             e.preventDefault();
@@ -134,7 +138,7 @@ export default function BucketObjectList({ timeAgo }) {
                 <td>{bytesToSize(obj.size)}</td>
                 <td>
                   <a
-                    href="#"
+                    href="#view"
                     className="btn btn-primary"
                     onClick={(event) => viewObjectHandle(event, obj)}
                   >
@@ -143,7 +147,7 @@ export default function BucketObjectList({ timeAgo }) {
                 </td>
                 <td>
                   <a
-                    href={`${API_HOST}bucket/${bucketName}/object?objectName=${obj.name}&action=download`}
+                    href={`${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${obj.name}&action=download`}
                     className="btn btn-success"
                   >
                     Download
@@ -151,7 +155,7 @@ export default function BucketObjectList({ timeAgo }) {
                 </td>
                 <td>
                   <a
-                    href="#"
+                    href="#delete"
                     className="btn btn-danger"
                     onClick={(event) => deleteObjectHandle(event, obj)}
                   >
