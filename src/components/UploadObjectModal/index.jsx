@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { API_HOST } from "../../config";
+import { API_HOST, API_PORT } from "../../config";
 import { bytesToSize } from "../../utils";
 import style from "./index.module.css";
 import { useState, useRef } from "react";
@@ -27,7 +27,7 @@ export default function UploadObjectModal({
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await axios.post(API_HOST + 'bucket/' + bucketName, formData, {
+      const res = await axios.post(`${API_HOST}:${API_PORT}/bucket/${bucketName}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import MainLayout from "../components/Layouts/MainLayout";
 import UploadObjectModal from "../components/UploadObjectModal";
-import { API_HOST } from "../config";
+import { API_HOST, API_PORT } from "../config";
 import { bytesToSize } from "../utils";
 import ObjectPreviewModal from "../components/ObjectPreviewModal";
 
@@ -21,7 +21,7 @@ export default function BucketObjectList({ timeAgo }) {
 
   async function getBucketObjects() {
     try {
-      const res = await axios.get(API_HOST + "bucket/" + bucketName);
+      const res = await axios.get(`${API_HOST}:${API_PORT}/bucket/${bucketName}`);
       const { data } = res;
 
       setBucketObjects(data);
@@ -47,7 +47,7 @@ export default function BucketObjectList({ timeAgo }) {
 
   async function deleteObject(objectName) {
     try {
-      const res = await axios.delete(`${API_HOST}bucket/${bucketName}`, {
+      const res = await axios.delete(`${API_HOST}:${API_PORT}/bucket/${bucketName}`, {
         data: { objectName: objectName },
       });
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { API_HOST } from "../config";
+import { API_HOST, API_PORT } from "../config";
 import MainLayout from "../components/Layouts/MainLayout";
 import { Link } from "react-router-dom";
 
@@ -13,7 +13,7 @@ export default function BucketList() {
 
   async function getBuckets() {
     try {
-      const res = await axios.get(API_HOST + "bucket");
+      const res = await axios.get(`${API_HOST}:${API_PORT}/bucket`);
       console.log(res);
       const { data } = res;
 

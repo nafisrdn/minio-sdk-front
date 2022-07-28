@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { API_HOST } from "../../config";
+import { API_HOST, API_PORT } from "../../config";
 import style from "./index.module.css";
 
 export default function ObjectPreviewModal({
@@ -21,7 +21,7 @@ export default function ObjectPreviewModal({
 
   async function getObj() {
     const res = await axios.get(
-      `${API_HOST}bucket/${bucketName}/object?objectName=${object.name}&action=view&plain=true`
+      `${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${object.name}&action=view&plain=true`
     );
 
     const { data } = res;
@@ -44,7 +44,7 @@ export default function ObjectPreviewModal({
             <div className="modal-body">
               {isImage ? (
                 <img
-                  src={`${API_HOST}bucket/${bucketName}/object?objectName=${object.name}&action=view`}
+                  src={`${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${object.name}&action=view`}
                   className={style.image}
                 />
               ) : (

@@ -3,7 +3,7 @@ import styles from "../pageStyles/login.module.css";
 import { useState } from "react";
 
 import axios from "axios";
-import { API_HOST } from "../config";
+import { API_HOST, API_PORT } from "../config";
 
 export default function Login() {
   const [accessKey, setAccessKey] = useState("");
@@ -12,7 +12,7 @@ export default function Login() {
   const formHandle = async (e) => {
     e.preventDefault();
 
-    const res = await axios.post(API_HOST + "auth/login", {
+    const res = await axios.post(`${API_HOST}:${API_PORT}/auth/login`, {
       accessKey: accessKey,
       privateKey: privateKey,
     });
