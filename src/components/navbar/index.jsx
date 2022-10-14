@@ -14,13 +14,11 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* <div className="col">
-            <div className="d-flex justify-content-end align-items-center h-100">
-              <Link to="/logout" className="btn btn-warning">
-                Logout
-              </Link>
-            </div>
-          </div> */}
+          <div className="col">
+            <span className="d-flex justify-content-end align-items-center h-100">
+              0.1.2
+            </span>
+          </div>
         </div>
       </div>
     </nav>

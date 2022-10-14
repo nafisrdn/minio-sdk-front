@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { API_HOST, API_PORT } from "../config";
+import { getBuckets } from "../services/MinIO";
 import MainLayout from "../components/Layouts/MainLayout";
 import { Link } from "react-router-dom";
 
@@ -8,20 +7,17 @@ export default function BucketList() {
   const [buckets, setBuckets] = useState([]);
 
   useEffect(() => {
-    getBuckets();
+    const getAndSet = async () => {
+      try {
+        const res = await getBuckets();
+        setBuckets(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getAndSet();
   }, []);
-
-  async function getBuckets() {
-    try {
-      const res = await axios.get(`${API_HOST}:${API_PORT}/bucket`);
-      console.log(res);
-      const { data } = res;
-
-      setBuckets(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   return (
     <MainLayout>

@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useState, useEffect, useCallback } from "react";
 import { API_HOST, API_PORT } from "../../config";
+import ModalPopup from "../ModalPopup";
 import style from "./index.module.css";
 
 export default function ObjectPreviewModal({
   onCloseClick,
-  object,
+  objectName,
   ext,
   bucketName,
 }) {
@@ -15,7 +16,7 @@ export default function ObjectPreviewModal({
 
   const getObj = useCallback(async () => {
     const res = await axios.get(
-      `${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${object.name}&action=view&plain=true`
+      `${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${objectName}&action=view&plain=true`
     );
 
     const { data } = res;
@@ -25,41 +26,33 @@ export default function ObjectPreviewModal({
     } else {
       setObjContent(data);
     }
-  }, [bucketName, ext, object.name]);
+  }, [bucketName, ext, objectName]);
 
   useEffect(() => {
     if (isImage) return;
 
     getObj();
-  }, [object, isImage, getObj]);
+  }, [objectName, isImage, getObj]);
 
   return (
-    <div className={style.parent}>
-      <div className={`modal ${style.modal}`} id="myModal" role="dialog">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5>Preview</h5>
-            </div>
-            <div className="modal-body">
-              {isImage ? (
-                <img
-                  src={`${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${object.name}&action=view`}
-                  className={style.image}
-                  alt=''
-                />
-              ) : (
-                <p className={style.text}>{objContent}</p>
-              )}
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={onCloseClick}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ModalPopup
+      onBackdropClick={onCloseClick}
+      header={<h5>Preview</h5>}
+      footer={
+        <button className="btn btn-secondary" onClick={onCloseClick}>
+          Close
+        </button>
+      }
+    >
+      {isImage ? (
+        <img
+          src={`${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${objectName}&action=view`}
+          className={style.image}
+          alt=""
+        />
+      ) : (
+        <p className={style.text}>{objContent}</p>
+      )}
+    </ModalPopup>
   );
 }

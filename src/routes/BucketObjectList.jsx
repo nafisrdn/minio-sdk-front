@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import MainLayout from "../components/Layouts/MainLayout";
 import UploadObjectModal from "../components/UploadObjectModal";
-import { API_HOST, API_PORT } from "../config";
 import { bytesToSize } from "../utils";
 import ObjectPreviewModal from "../components/ObjectPreviewModal";
+import { getBucketObjects } from "../services/MinIO";
+import BucketObjectListDeleteButton from "../components/BucketObjectListDeleteButton";
+import BucketObjectListDownloadButton from "../components/BucketObjectListDownloadButton";
+import BucketObjectListViewButton from "../components/BucketObjectListViewButton";
 
 export default function BucketObjectList({ timeAgo }) {
   const { bucketName } = useParams();
@@ -15,79 +17,37 @@ export default function BucketObjectList({ timeAgo }) {
   const [latestInfo, setLatestInfo] = useState(null);
   const [selectedObj, setSelectedObj] = useState();
 
-  const getBucketObjects = useCallback(async () => {
+  const getObjects = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `${API_HOST}:${API_PORT}/bucket/${bucketName}`
-      );
-      const { data } = res;
+      const res = await getBucketObjects(bucketName);
 
-      setBucketObjects(data);
+      setBucketObjects(res.data);
     } catch (error) {
       console.error(error);
     }
   }, [bucketName]);
 
   useEffect(() => {
-    getBucketObjects();
-  }, [latestInfo, getBucketObjects]);
+    getObjects();
+  }, [latestInfo, getObjects]);
 
   function objectUploadedHandle(info) {
     setIsUploadModalShow(false);
     setLatestInfo(info);
   }
 
-  function deleteObjectHandle(event, obj) {
-    event.preventDefault();
-
-    let confirmed = window.confirm(`Delete ${obj.name}?`);
-
-    if (!confirmed) return;
-
-    deleteObject(obj.name);
-  }
-
-  async function deleteObject(objectName) {
-    try {
-      const res = await axios.delete(
-        `${API_HOST}:${API_PORT}/bucket/${bucketName}`,
-        {
-          data: { objectName: objectName },
-        }
-      );
-
-      setLatestInfo({
-        isSuccess: true,
-        message: res.data.message,
-        fileName: objectName,
-      });
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  function viewObjectHandle(event, obj) {
-    event.preventDefault();
-
-    const splitText = obj.name.split(".");
-    const ext = splitText[splitText.length - 1].toLowerCase();
-
-    setSelectedObj({ object: obj, ext: ext });
-    setIsPreviewModalShow(true);
-  }
-
   return (
     <MainLayout>
-      <UploadObjectModal
-        show={isUploadModalShow}
-        onCloseClick={() => setIsUploadModalShow(false)}
-        bucketName={bucketName}
-        onObjectUploaded={objectUploadedHandle}
-      />
+      {isUploadModalShow && (
+        <UploadObjectModal
+          onCloseClick={() => setIsUploadModalShow(false)}
+          bucketName={bucketName}
+          onObjectUploaded={objectUploadedHandle}
+        />
+      )}
       {isPreviewModalShow && (
         <ObjectPreviewModal
-          object={selectedObj.object}
+          objectName={selectedObj.name}
           ext={selectedObj.ext}
           bucketName={bucketName}
           onCloseClick={() => setIsPreviewModalShow(false)}
@@ -136,32 +96,27 @@ export default function BucketObjectList({ timeAgo }) {
                 <td>{obj.name}</td>
                 <td>{timeAgo.format(new Date(obj.lastModified))}</td>
                 <td>{bytesToSize(obj.size)}</td>
-                <td>
-                  <a
-                    href="#view"
-                    className="btn btn-primary"
-                    onClick={(event) => viewObjectHandle(event, obj)}
-                  >
-                    View
-                  </a>
-                </td>
-                <td>
-                  <a
-                    href={`${API_HOST}:${API_PORT}/bucket/${bucketName}/object?objectName=${obj.name}&action=download`}
-                    className="btn btn-success"
-                  >
-                    Download
-                  </a>
-                </td>
-                <td>
-                  <a
-                    href="#delete"
-                    className="btn btn-danger"
-                    onClick={(event) => deleteObjectHandle(event, obj)}
-                  >
-                    Delete
-                  </a>
-                </td>
+
+                <BucketObjectListViewButton
+                  objectName={obj.name}
+                  onClick={(objectName, ext) => {
+                    setSelectedObj({ name: objectName, ext: ext });
+                    setIsPreviewModalShow(true);
+                  }}
+                />
+
+                <BucketObjectListDownloadButton
+                  bucketName={bucketName}
+                  objectName={obj.name}
+                />
+                
+                <BucketObjectListDeleteButton
+                  bucketName={bucketName}
+                  objectName={obj.name}
+                  onObjectDelete={(info) => {
+                    setLatestInfo(info);
+                  }}
+                />
               </tr>
             ))}
           </tbody>
